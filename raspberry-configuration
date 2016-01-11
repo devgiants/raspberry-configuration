@@ -4,27 +4,45 @@
 printf "Type in RPI IP address:"
 read rpi_address
 
+printf "Type in new hostname for this RPI:"
+read hostname
+
+
+printf "Type in new username to create:"
+read username
+
+printf "Type in new SSH port [6061]:"
+read ssh_port
+
+ssh_port=${ssh_port:=6061}
+
+# Get public key path to setup SSH connection
+printf "Type in public key path [~/.ssh/id_rsa.pub]:"
+read key_path
+key_path=${key_path:=~/.ssh/id_rsa.pub}
+
+
 # Get all commands to be executed on RPI
-printf "Get all commands to be executed on RPI...\n"
-temp_dir = "/tmp/rpi-configuration"
-rm -rf $temp_dir
-git clone https://github.com/devgiants/raspberrypi-initialisation-script.git $tmp_dir
-commands=$(cat $tmp_dir/script1)
-printf "\e[1m\e[32mDONE\e[39m\e[21m\n"
+tmp_dir="/tmp/rpi-configuration"
+commands="rm -rf $tmp_dir | git clone https://github.com/devgiants/raspberrypi-initialisation-script.git $tmp_dir | $tmp_dir/script1 -u $username -p $ssh_port -H $hostname"
+commands="sudo reboot"
+
+#echo "$commands"
+
 
 # execute on RPI
 printf "Running remote commands...\n"
 ssh pi@$rpi_address "$commands"
 printf "\e[1m\e[32mDONE RUNNING REMOTE COMMANDS\e[39m\e[21m\n"
 
+# wait for reboot start
+sleep 5;
 
-echo $hostname
-echo $username
-# Get public key path to setup SSH connection
-#printf "Type in public key path [~/.ssh/id_rsa.pub]:"
-#read key_path
-#key_path=${key_path:-~/.ssh/id_rsa.pub}
+printf "Wait for RPI reboot...\n"
+while ! ping -c 1 $rpi_address &>/dev/null; do printf '.'; sleep 5; done
+printf "\e[1m\e[32mRPI BACK ONLINE\e[39m\e[21m\n"
 
-# Copy public key on RPI
-#ssh-copy-id -i $key_path 
+#printf "Copy SSH public key for further connections...\n"
+#ssh-copy-id ~i $key_path "$username"@"$hostname"
+#printf "\e[1m\e[32mDONE\e[39m\e[21m\n"
 
