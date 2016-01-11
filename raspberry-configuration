@@ -24,11 +24,11 @@ key_path=${key_path:=~/.ssh/id_rsa.pub}
 
 # Get all commands to be executed on RPI
 tmp_dir="/tmp/rpi-configuration"
-commands="rm -rf $tmp_dir | git clone https://github.com/devgiants/raspberrypi-initialisation-script.git $tmp_dir | $tmp_dir/script1 -u $username -p $ssh_port -H $hostname"
-commands="sudo reboot"
+commands="rm -rf $tmp_dir; git clone https://github.com/devgiants/raspberrypi-initialisation-script.git $tmp_dir; bash $tmp_dir/script1 -u $username -p $ssh_port -H $hostname"
+#commands="sudo reboot"
 
 #echo "$commands"
-
+#exit 0
 
 # execute on RPI
 printf "Running remote commands...\n"
@@ -42,7 +42,7 @@ printf "Wait for RPI reboot...\n"
 while ! ping -c 1 $rpi_address &>/dev/null; do printf '.'; sleep 5; done
 printf "\e[1m\e[32mRPI BACK ONLINE\e[39m\e[21m\n"
 
-#printf "Copy SSH public key for further connections...\n"
-#ssh-copy-id ~i $key_path "$username"@"$hostname"
-#printf "\e[1m\e[32mDONE\e[39m\e[21m\n"
+printf "Copy SSH public key for further connections...\n"
+ssh-copy-id ~i $key_path "$username"@"$hostname"
+printf "\e[1m\e[32mDONE\e[39m\e[21m\n"
 
