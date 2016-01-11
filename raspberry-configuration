@@ -43,6 +43,6 @@ while ! ping -c 1 $rpi_address &>/dev/null; do printf '.'; sleep 2; done
 printf "\e[1m\e[32mRPI BACK ONLINE\e[39m\e[21m\n"
 
 printf "Copy SSH public key for further connections...\n"
-ssh-copy-id -i $key_path "$username"@"$hostname"
+ssh-copy-id -i "$key_path" "$username@$rpi_address" -p "$ssh_port"
 printf "\e[1m\e[32mDONE\e[39m\e[21m\n"
 
