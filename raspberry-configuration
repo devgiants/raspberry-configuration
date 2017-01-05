@@ -47,5 +47,5 @@ ssh-copy-id -i "$key_path" "$username@$rpi_address" -p "$ssh_port"
 printf "\e[1m\e[32mDONE\e[39m\e[21m\n"
 
 printf "Finally general update & upgrade and remove pi user...\n"
-commands="userdel -rf pi"
+commands="sudo apt-get -y update; sudo apt-get -y --fix-missing upgrade; sudo userdel -rf pi"
 ssh $username@$rpi_address -p $ssh_port -t "$commands"
