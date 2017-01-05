@@ -46,3 +46,6 @@ printf "Copy SSH public key for further connections...\n"
 ssh-copy-id -i "$key_path" "$username@$rpi_address" -p "$ssh_port"
 printf "\e[1m\e[32mDONE\e[39m\e[21m\n"
 
+printf "Finally general update & upgrade and remove pi user...\n"
+commands="userdel -rf pi"
+ssh $username@$rpi_address -p $ssh_port -t "$commands"
